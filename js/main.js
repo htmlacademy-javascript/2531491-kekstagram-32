@@ -17,8 +17,6 @@ const NAMES = [
   'Денис',
 ];
 
-/*const ID_PHOTO = [1, 2, 3, 4 , 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25];*/
-
 const ID_AVATAR = [1, 2, 3, 4 , 5, 6];
 
 const DESCRIPTION = [
@@ -68,7 +66,7 @@ const getRandomInteger = (a, b) => {
 
 const getRandomArrayElement = (elements) => elements[getRandomInteger(0, elements.length - 1)];
 
-const unicIdNumber = (max) => {
+const getUnicIdNumber = (max) => {
 
   const idArray = [];
 
@@ -87,18 +85,25 @@ const unicIdNumber = (max) => {
   };
 };
 
-const createInfoBlock = () => ({
+const createInfoBlock = () => {
+  const id = getUnicIdNumber(25);
+  const idComments = getUnicIdNumber(200);
 
-  id: unicIdNumber(25),
-  url: `photos/${this.id}.jpg`,
-  description: DESCRIPTION[this.id],
-  likes: getRandomInteger(15, 200),
-  comments: {
-    id: unicIdNumber(200),
-    avatar: `img/avatar-${getRandomArrayElement(ID_AVATAR)}.svg`,
-    message: getRandomArrayElement(MESSAGE),
-    name: getRandomArrayElement(NAMES),
-  }
-});
+  return {
+    id: id(),
+    url: `photos/${id()}.jpg`,
+    description: `${DESCRIPTION[id()]}`,
+    likes: getRandomInteger(15, 200),
+    comments: {
+      id: idComments(),
+      avatar: `img/avatar-${getRandomArrayElement(ID_AVATAR)}.svg`,
+      message: getRandomArrayElement(MESSAGE),
+      name: getRandomArrayElement(NAMES),
+    }
+  };
+};
 
 const infoBlock = Array.from({length: INFO_BLOCK_COUNT}, createInfoBlock);
+
+// eslint-disable-next-line no-console
+console.log(infoBlock);
