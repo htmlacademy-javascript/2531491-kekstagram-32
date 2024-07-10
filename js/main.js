@@ -1,4 +1,9 @@
-import { getRenderItems } from './renderPicture';
+import { mockedPhotos } from './data.js';
+import { savePhotoState } from './photo-state.js';
+import { getRenderItems } from './render-pictures.js';
 
-getRenderItems();
+const photos = mockedPhotos();
+savePhotoState(photos);
+getRenderItems(photos);
+
 

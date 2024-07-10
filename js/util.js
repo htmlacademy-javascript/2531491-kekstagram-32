@@ -13,9 +13,20 @@ const getRandomInteger = (a, b) => {
 const getRandomArrayElement = (elements) => elements[getRandomInteger(0, elements.length - 1)];
 
 
-const getUnicIdNumber = () => {
+const getUniqIdNumber = () => {
   let id = 1;
   return () => id++;
 };
 
-export {getRandomInteger, getRandomArrayElement, getUnicIdNumber};
+const createElement = function(tagName, className, text) {
+  const element = document.createElement(tagName);
+  element.classList.add(className);
+  if(text) {
+    element.textContent = text;
+  }
+  return element;
+};
+
+const isEscapeKey = (evt) => evt.key === 'Escape';
+
+export {getRandomInteger, getRandomArrayElement, getUniqIdNumber, createElement, isEscapeKey};

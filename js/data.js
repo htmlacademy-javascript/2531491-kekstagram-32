@@ -1,61 +1,36 @@
-const NAMES = [
-  'Иван',
-  'Павел',
-  'Мария',
-  'Инга',
-  'Инна',
-  'Юлия',
-  'Лолита',
-  'Артур',
-  'Дмтрий',
-  'Ростислав',
-  'Людмила',
-  'Галина',
-  'Нина',
-  'Александр',
-  'Петр',
-  'Денис',
-];
+import {getRandomInteger, getRandomArrayElement, getUniqIdNumber} from './util.js';
+import {NAMES, DESCRIPTION, MESSAGE, ID_AVATAR, INFO_BLOCK_COUNT, LIKES_FOR_IMAGES_COUNT_MIN, LIKES_FOR_IMAGES_COUNT_MAX, MIN_COMMENTS, MAX_COMMENTS} from './constants.js';
 
-const DESCRIPTION = [
-  'Перекрасный пляж в санатории',
-  'Указатель на пляж',
-  'Пляж на море со стороны скал',
-  'Красивая девушка с фотоаппаратом',
-  'Вкусный суп с рисовыми человечками в нем',
-  'Эффектный спортивный автомобиль черно-матового цвета',
-  'Клубника в тарелке',
-  'Пара стаканов с вкусным виноградным соком',
-  'Девушка на пляже, тянущая руки в пролетающему над ней самолету',
-  'Выдвижная подставка для обуви',
-  'Пляж обустроенный проходом через него, огороженный забором',
-  'Белая ауди',
-  'Салат из овощей',
-  'Котик одетый в костюм бутерброда',
-  'Ноги на спинке дивана',
-  'Небо с облаками и летящий в дали самолет',
-  'Хор поет на сцене',
-  'Раритетный автомобиль в гараже',
-  'Тапочки со встроенными в них фонариками',
-  'Аллея из пальм возле отеля',
-  'Вкусный мясной салат',
-  'Закат на пляже',
-  'Краб на камне',
-  'Концерт Тиесто',
-  'Атака бегемота на белый внедорожник который проезжает по воде',
-];
+const createId = getUniqIdNumber();
+const createIdComments = getUniqIdNumber();
 
-const MESSAGE = [
-  'Всё отлично!',
-  'В целом всё неплохо. Но не всё.',
-  'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
-  'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
-  'Как можно было поймать такой неудачный момент?!',
-];
+const createCommentBlock = () => {
 
-const ID_AVATAR = [1, 2, 3, 4 , 5, 6];
-const INFO_BLOCK_COUNT = 25;
-const LIKES_FOR_IMAGES_COUNT_MIN = 15;
-const LIKES_FOR_IMAGES_COUNT_MAX = 200;
+  const idComments = createIdComments();
 
-export {NAMES, DESCRIPTION, MESSAGE, ID_AVATAR, INFO_BLOCK_COUNT, LIKES_FOR_IMAGES_COUNT_MIN, LIKES_FOR_IMAGES_COUNT_MAX};
+  return {
+    idComment: idComments,
+    avatar: `img/avatar-${getRandomArrayElement(ID_AVATAR)}.svg`,
+    message: getRandomArrayElement(MESSAGE),
+    name: getRandomArrayElement(NAMES)
+  };
+};
+
+const createInfoBlock = () => {
+  const id = createId();
+  const urlLink = `photos/${id}.jpg`;
+  const desc = DESCRIPTION[`${id - 1}`];
+  const commentBlock = Array.from({length: getRandomInteger(MIN_COMMENTS, MAX_COMMENTS)}, createCommentBlock);
+
+  return {
+    id: id,
+    url: urlLink,
+    description: desc,
+    likes: getRandomInteger(LIKES_FOR_IMAGES_COUNT_MIN, LIKES_FOR_IMAGES_COUNT_MAX),
+    comments: commentBlock
+  };
+};
+
+const mockedPhotos = () => Array.from({length: INFO_BLOCK_COUNT}, createInfoBlock);
+
+export {mockedPhotos};
