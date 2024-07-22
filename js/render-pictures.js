@@ -1,4 +1,5 @@
-import {getViewImage} from './image-viewer.js';
+import {getViewImage } from './image-viewer.js';
+
 
 const renderList = document.querySelector('.pictures');
 const template = document.querySelector('#picture').content.querySelector('.picture');
