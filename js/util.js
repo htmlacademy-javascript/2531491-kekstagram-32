@@ -18,6 +18,8 @@ const getUniqIdNumber = () => {
   return () => id++;
 };
 
+const getNormalizedStringArray = (string) => string.toString().toLowerCase().trim().replace(/\s+/g, ' ').split(' ');
+
 const createElement = function(tagName, className, text) {
   const element = document.createElement(tagName);
   element.classList.add(className);
@@ -29,4 +31,4 @@ const createElement = function(tagName, className, text) {
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
-export {getRandomInteger, getRandomArrayElement, getUniqIdNumber, createElement, isEscapeKey};
+export {getRandomInteger, getRandomArrayElement, getUniqIdNumber, createElement, isEscapeKey, getNormalizedStringArray};
