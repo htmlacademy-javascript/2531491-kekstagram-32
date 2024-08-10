@@ -31,6 +31,6 @@ const createInfoBlock = () => {
   };
 };
 
-const mockedPhotos = () => Array.from({length: INFO_BLOCK_COUNT}, createInfoBlock);
+//const mockedPhotos = () => Array.from({length: INFO_BLOCK_COUNT}, createInfoBlock);
 
-export {mockedPhotos};
+export {createInfoBlock};

@@ -70,7 +70,6 @@ const renderComments = (comments) => {
 showMoreCommentsButton.addEventListener('click', onLoaderButtonClick);
 
 const getViewImage = function(dataset) {
-
   imageToFrame.src = dataset.url;
   imageToFrame.alt = dataset.description;
   likesImages.textContent = dataset.likes;
