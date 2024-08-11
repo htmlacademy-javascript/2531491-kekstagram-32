@@ -1,4 +1,6 @@
 import { getNormalizedStringArray, isEscapeKey } from './util.js';
+import {sendData} from './API.js';
+import { showAlert, showSuccess } from './constants.js';
 
 export const form = document.querySelector('.img-upload__form');
 const uploadInput = form.querySelector('.img-upload__input');
@@ -91,15 +93,21 @@ pristine.addValidator(hashtagsInput, validateHashtagCount, ErrorMessage.HASHTAG_
 pristine.addValidator(hashtagsInput, validateHashtagDuplicate, ErrorMessage.DUPLICATE_HASHTAGS, 2, true);
 pristine.addValidator(descriptionImage, validateDescriptionLength, ErrorMessage.COMMENTS_SYMBOLS, 4, true);
 
-const onFormSubmit = (evt) => {
-  evt.preventDefault();
-  if(pristine.validate()) {
-    closeModal();
-  } else {
-    alert('не верная форма валидации');
-  }
+const onFormSubmit = (onSuccess) => {
+  form.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    if(pristine.validate()) {
+      sendData(new FormData(evt.target))
+        .then((onSuccess) => {
+          showSuccess();
+        })
+        .catch(
+          (err) => {
+            showAlert(err.message);
+          }
+        );
+    }
+  });
 };
 
-form.addEventListener('submit', onFormSubmit);
-
-export {uploadInputHandler};
+export {uploadInputHandler, onFormSubmit, closeModal, openModal};
