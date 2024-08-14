@@ -1,6 +1,6 @@
 import { getNormalizedStringArray, isEscapeKey } from './util.js';
 import {sendData} from './API.js';
-import { showAlert, showSuccess } from './constants.js';
+import { showAlertLoadingImages, showSuccess } from './constants.js';
 
 export const form = document.querySelector('.img-upload__form');
 const uploadInput = form.querySelector('.img-upload__input');
@@ -98,12 +98,13 @@ const onFormSubmit = (onSuccess) => {
     evt.preventDefault();
     if(pristine.validate()) {
       sendData(new FormData(evt.target))
-        .then((onSuccess) => {
+        .then(() => {
+          onSuccess();
           showSuccess();
         })
         .catch(
-          (err) => {
-            showAlert(err.message);
+          () => {
+            showAlertLoadingImages();
           }
         );
     }

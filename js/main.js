@@ -3,10 +3,12 @@ import { uploadInputHandler, onFormSubmit, closeModal } from './form-validation.
 import { resetSlider } from './photo-filter.js';
 import {getData} from './API.js';
 import {showAlert} from './constants.js';
+import { initFilter } from './filter.js';
 
 getData()
   .then((data) => {
     createPreview(data);
+    initFilter(data);
   })
   .catch(
     (err) => {
