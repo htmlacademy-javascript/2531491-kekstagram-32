@@ -1,7 +1,6 @@
 import {getViewImage } from './image-viewer.js';
 
-
-const renderList = document.querySelector('.pictures');
+export const renderList = document.querySelector('.pictures');
 const template = document.querySelector('#picture').content.querySelector('.picture');
 
 const createPreview = (dataPreview) => {
