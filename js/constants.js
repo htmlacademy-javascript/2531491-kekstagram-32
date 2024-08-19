@@ -1,22 +1,47 @@
+import { isEscapeKey } from './util.js';
+
 const INFO_BLOCK_COUNT = 25;
 const MIN_COMMENTS = 0;
 const MAX_COMMENTS = 30;
 const SHOW_TIME = 5000;
-export const MAX_RANDOM_PICTURE_COUNT = 10;
+const MAX_RANDOM_PICTURE_COUNT = 10;
+const PREVIEW_PER_STEP = 25;
+const API_URL = 'https://32.javascript.htmlacademy.pro/kekstagram';
 
-export const showAlertLoadingImages = () => {
-  const alertContainer = document.querySelector('#error').content.querySelector('.error');
-
-  const closeButton = alertContainer.querySelector('.error__button');
-  closeButton.addEventListener('click', (evt) => {
-    evt.preventDefault();
-    alertContainer.remove();
-  });
-
-  document.body.append(alertContainer);
+const Method = {
+  GET: 'GET',
+  POST: 'POST'
 };
 
-export const showAlert = () => {
+const Route = {
+  GET_DATA: '/data',
+  SEND_DATA: '/'
+};
+
+const onClickListener = (evt) => {
+  evt.stopPropagation();
+  const element = document.querySelector('.success') || document.querySelector('.error');
+  const closeButton = element.querySelector('button');
+  if (evt.target === element || evt.target === closeButton || isEscapeKey(evt)) {
+    element.remove();
+    document.body.removeEventListener('click', onClickListener);
+    document.body.removeEventListener('keydown', onClickListener);
+  }
+};
+
+const renderResponseMessage = (template) => {
+  const currentMessage = template.cloneNode(true);
+  document.body.append(currentMessage);
+  document.body.addEventListener('click', onClickListener);
+  document.body.addEventListener('keydown', onClickListener);
+};
+
+const showAlertLoadingImages = () => {
+  const errorContainer = document.querySelector('#error').content.querySelector('.error');
+  renderResponseMessage(errorContainer);
+};
+
+const showAlert = () => {
   const alertContainer = document.querySelector('#data-error').content.querySelector('.data-error');
 
   document.body.append(alertContainer);
@@ -26,28 +51,9 @@ export const showAlert = () => {
   }, SHOW_TIME);
 };
 
-export const showSuccess = () => {
+const showSuccess = () => {
   const successContainer = document.querySelector('#success').content.querySelector('.success');
-
-  const closeButton = successContainer.querySelector('.success__button');
-  closeButton.addEventListener('click', (evt) => {
-    evt.preventDefault();
-    successContainer.remove();
-  });
-
-  document.body.append(successContainer);
+  renderResponseMessage(successContainer);
 };
 
-export const API_URL = 'https://32.javascript.htmlacademy.pro/kekstagram';
-
-export const METHOD = {
-  GET: 'GET',
-  POST: 'POST'
-};
-
-export const ROUTE = {
-  GET_DATA: '/data',
-  SEND_DATA: '/'
-};
-
-export {INFO_BLOCK_COUNT, MIN_COMMENTS, MAX_COMMENTS};
+export { INFO_BLOCK_COUNT, MIN_COMMENTS, MAX_COMMENTS, Method, Route, API_URL, showSuccess, showAlert, showAlertLoadingImages, MAX_RANDOM_PICTURE_COUNT, PREVIEW_PER_STEP };

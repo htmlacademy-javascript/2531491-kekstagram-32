@@ -1,8 +1,8 @@
 import { createPreview } from './render-pictures.js';
-import { uploadInputHandler, onFormSubmit, closeModal } from './form-validation.js';
+import { uploadInputHandler, formSubmit, closeModal } from './form-validation.js';
 import { resetSlider } from './photo-filter.js';
-import {getData} from './API.js';
-import {showAlert} from './constants.js';
+import { getData } from './API.js';
+import { showAlert } from './constants.js';
 import { initFilter } from './filter.js';
 
 getData()
@@ -17,5 +17,5 @@ getData()
   );
 
 uploadInputHandler();
-onFormSubmit(closeModal);
+formSubmit(closeModal);
 resetSlider();

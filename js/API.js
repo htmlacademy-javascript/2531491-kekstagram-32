@@ -1,6 +1,6 @@
-import { API_URL, METHOD, ROUTE } from './constants.js';
+import { API_URL, Method, Route } from './constants.js';
 
-const load = (route, method = METHOD.GET, body = null) =>
+const load = (route, method = Method.GET, body = null) =>
   fetch(`${API_URL}${route}`, {method, body})
     .then((response) => {
       if (!response.ok) {
@@ -12,7 +12,7 @@ const load = (route, method = METHOD.GET, body = null) =>
       throw new Error(err.message);
     });
 
-const getData = () => load(ROUTE.GET_DATA, METHOD.GET);
-const sendData = (body) => load(ROUTE.SEND_DATA, METHOD.POST, body);
+const getData = () => load(Route.GET_DATA, Route.GET);
+const sendData = (body) => load(Route.SEND_DATA, Route.POST, body);
 
 export { getData, sendData };

@@ -1,6 +1,6 @@
-import {getViewImage } from './image-viewer.js';
+import { getViewImage } from './image-viewer.js';
 
-export const renderList = document.querySelector('.pictures');
+const renderContainer = document.querySelector('.pictures');
 const template = document.querySelector('#picture').content.querySelector('.picture');
 
 const createPreview = (dataPreview) => {
@@ -19,7 +19,7 @@ const createPreview = (dataPreview) => {
     });
   });
 
-  renderList.append(imageFragment);
+  renderContainer.append(imageFragment);
 };
 
 export { createPreview };
