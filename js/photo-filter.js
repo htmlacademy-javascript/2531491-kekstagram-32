@@ -1,7 +1,16 @@
-import { preview } from './form-validation.js';
-import { form } from './form-validation.js';
+import { preview, form } from './form-validation.js';
+import { PREVIEW_PER_STEP } from './constants.js';
 
-const EFFECTS = [
+const scaleContainer = document.querySelector('.img-upload__scale');
+const buttonSmaller = scaleContainer.querySelector('.scale__control--smaller');
+const buttonBigger = scaleContainer.querySelector('.scale__control--bigger');
+const valueScale = scaleContainer.querySelector('.scale__control--value');
+const sliderContainer = form.querySelector('.effect-level');
+const sliderElement = form.querySelector('.effect-level__slider');
+const effectLevelValueElement = form.querySelector('.effect-level__value');
+const effectsElement = form.querySelector('.effects');
+
+const Effects = [
   {
     name: 'none',
     style: 'none',
@@ -15,7 +24,7 @@ const EFFECTS = [
     style: 'grayscale',
     min: 0,
     max: 1,
-    step: 0.1,
+    step: 0.10,
     unit: ''
   },
   {
@@ -23,7 +32,7 @@ const EFFECTS = [
     style: 'sepia',
     min: 0,
     max: 1,
-    step: 0.1,
+    step: 0.10,
     unit: ''
   },
   {
@@ -39,7 +48,7 @@ const EFFECTS = [
     style: 'blur',
     min: 0,
     max: 3,
-    step: 0.1,
+    step: 0.10,
     unit: 'px'
   },
   {
@@ -47,26 +56,20 @@ const EFFECTS = [
     style: 'brightness',
     min: 1,
     max: 3,
-    step: 0.1,
+    step: 0.10,
     unit: ''
   },
 ];
 
-const DEFAULT_EFFECT = EFFECTS[0];
-
-const sliderWrapper = form.querySelector('.effect-level');
-const sliderElement = form.querySelector('.effect-level__slider');
-const effectLevelValueElement = form.querySelector('.effect-level__value');
-const effectsElement = form.querySelector('.effects');
-
+const DEFAULT_EFFECT = Effects[0];
 let chosenEffect = DEFAULT_EFFECT;
 
-const hiddenSlider = () => {
-  sliderWrapper.classList.add('hidden');
+const addHiddenSlider = () => {
+  sliderContainer.classList.add('hidden');
 };
 
 const showSlider = () => {
-  sliderWrapper.classList.remove('hidden');
+  sliderContainer.classList.remove('hidden');
 };
 
 const updateSlider = () => {
@@ -79,31 +82,58 @@ const updateSlider = () => {
     start: chosenEffect.max
   });
 
-  if(chosenEffect === DEFAULT_EFFECT) {
-    hiddenSlider();
+  if (chosenEffect === DEFAULT_EFFECT) {
+    addHiddenSlider();
   } else {
     showSlider();
   }
 };
 
-export const resetSlider = () => {
+const resetSlider = () => {
   chosenEffect = DEFAULT_EFFECT;
   updateSlider();
 };
 
+const setScaleButtonsImageSmaller = () => {
+  const currentWidth = parseFloat(preview.style.getPropertyValue('width'));
+  const newWidth = currentWidth - PREVIEW_PER_STEP;
+
+  if (currentWidth <= 25) {
+    buttonSmaller.disabled = true;
+  } else {
+    preview.style.setProperty('width', `${newWidth}%`);
+    valueScale.value = `${newWidth}%`;
+  }
+  buttonSmaller.disabled = false;
+};
+
+const setScaleButtonsImageBigger = () => {
+  const currentWidth = parseFloat(preview.style.getPropertyValue('width'));
+  const newWidth = currentWidth + PREVIEW_PER_STEP;
+
+  if (currentWidth >= 100) {
+    buttonBigger.disabled = true;
+  } else {
+    preview.style.setProperty('width', `${newWidth}%`);
+    valueScale.value = `${newWidth}%`;
+  }
+  buttonBigger.disabled = false;
+};
+
 const onEffectsChange = (evt) => {
-  if(!evt.target.classList.contains('effects__radio')) {
+  if (!evt.target.classList.contains('effects__radio')) {
     return;
   }
-  chosenEffect = EFFECTS.find((effect) => effect.name === evt.target.value);
+  chosenEffect = Effects.find((effect) => effect.name === evt.target.value);
   preview.className = `img-upload__preview effects__preview--${chosenEffect.name}`;
   updateSlider();
+
 };
 
 const onSliderUpdate = () => {
   const sliderValue = sliderElement.noUiSlider.get();
-  preview.style.filter = (chosenEffect === DEFAULT_EFFECT) ? DEFAULT_EFFECT.style : `${chosenEffect.style}(${sliderValue}${chosenEffect.unit})`;
-  effectLevelValueElement.value = sliderValue;
+  preview.style.setProperty('filter', (chosenEffect === DEFAULT_EFFECT) ? DEFAULT_EFFECT.style : `${chosenEffect.style}(${sliderValue}${chosenEffect.unit})`);
+  effectLevelValueElement.setAttribute('value', sliderValue);
 };
 
 noUiSlider.create(sliderElement, {
@@ -116,7 +146,15 @@ noUiSlider.create(sliderElement, {
   connect: 'lower'
 });
 
-hiddenSlider();
+addHiddenSlider();
 
 effectsElement.addEventListener('change', onEffectsChange);
 sliderElement.noUiSlider.on('update', onSliderUpdate);
+buttonSmaller.addEventListener('click', () => {
+  setScaleButtonsImageSmaller();
+});
+buttonBigger.addEventListener('click', () => {
+  setScaleButtonsImageBigger();
+});
+
+export { resetSlider };
