@@ -1,34 +1,26 @@
-const getRandomInteger = (a, b) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
-  const result = Math.random() * (upper - lower + 1) + lower;
-  return Math.floor(result);
-};
-
-/*function getRandomInteger(min, max) {
-  return Math.round(Math.random() * Math.abs(max - min) + min);
-}*/
-
-
-const getRandomArrayElement = (elements) => elements[getRandomInteger(0, elements.length - 1)];
-
-
-const getUniqIdNumber = () => {
-  let id = 1;
-  return () => id++;
-};
-
 const getNormalizedStringArray = (string) => string.toString().toLowerCase().trim().replace(/\s+/g, ' ').split(' ');
-
-const createElement = function(tagName, className, text) {
-  const element = document.createElement(tagName);
-  element.classList.add(className);
-  if(text) {
-    element.textContent = text;
-  }
-  return element;
-};
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
-export {getRandomInteger, getRandomArrayElement, getUniqIdNumber, createElement, isEscapeKey, getNormalizedStringArray};
+function debounce(callback, timeoutDelay = 500) {
+  let timeoutId;
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+}
+
+function throttle(callback, delayBetweenFrames) {
+  let lastTime = 0;
+
+  return (...rest) => {
+    const now = new Date();
+
+    if (now - lastTime >= delayBetweenFrames) {
+      callback.apply(this, rest);
+      lastTime = now;
+    }
+  };
+}
+
+export { isEscapeKey, getNormalizedStringArray, debounce, throttle };
