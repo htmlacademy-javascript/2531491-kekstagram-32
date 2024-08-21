@@ -1,7 +1,7 @@
 import { API_URL, Method, Route } from './constants.js';
 
 const load = (route, method = Method.GET, body = null) =>
-  fetch(`${API_URL}${route}`, {method, body})
+  fetch(`${API_URL}${route}`, { method, body })
     .then((response) => {
       if (!response.ok) {
         throw new Error(`Произошла ошибка ${response.status}: ${response.statusText}`);
@@ -12,7 +12,7 @@ const load = (route, method = Method.GET, body = null) =>
       throw new Error(err.message);
     });
 
-const getData = () => load(Route.GET_DATA, Route.GET);
-const sendData = (body) => load(Route.SEND_DATA, Route.POST, body);
+const getData = () => load(Route.GET_DATA, Method.GET);
+const sendData = (body) => load(Route.SEND_DATA, Method.POST, body);
 
 export { getData, sendData };

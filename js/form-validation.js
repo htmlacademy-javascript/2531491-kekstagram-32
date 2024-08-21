@@ -1,11 +1,13 @@
 import { getNormalizedStringArray, isEscapeKey } from './util.js';
 import { sendData } from './API.js';
 import { showAlertLoadingImages, showSuccess } from './constants.js';
+import { resetScale, resetSlider } from './photo-filter.js';
 
 const form = document.querySelector('.img-upload__form');
 const uploadInput = form.querySelector('.img-upload__input');
 const editingImage = form.querySelector('.img-upload__overlay');
 const cancelButton = form.querySelector('.cancel');
+const submitButton = form.querySelector('.img-upload__submit');
 const hashtagsInput = form.querySelector('.text__hashtags');
 const descriptionImage = form.querySelector('.text__description');
 const preview = document.querySelector('.img-upload__preview img');
@@ -23,7 +25,13 @@ const ErrorMessage = {
   HASHTAG_COUNT: `Количество хэштэгов должно быть не более ${MAX_HASHTAGS_COUNT}`,
   DUPLICATE_HASHTAGS: 'Хэштэги не должны повторяться',
   COMMENTS_SYMBOLS: `Максимальная длинна комментария ${MAX_COMMENTS_SYMBOLS}`,
-  HASHTAG_VALID_ERROR: 'Невалидный хэштег'
+  HASHTAG_VALID_ERROR: 'Невалидный хэштег',
+  HASHTAG_COUNT_SYMBOLS: `Минимальная длинна хэштег ${MIN_HASHTAG_SYMBOLS} не включая #`
+};
+
+const SubmitButtonText = {
+  IDLE: 'ОПУБЛИКОВАТЬ',
+  SENDING: 'ОТПРАВЛЯЕТСЯ...'
 };
 
 const pristine = new Pristine(form, {
@@ -59,39 +67,51 @@ const validateHashtagCount = (input) => {
   return hashtags.length <= MAX_HASHTAGS_COUNT;
 };
 
-const hasValidTags = (input) => getNormalizedStringArray(input).every((tag) => regexpHashtag.test(tag));
+const hasValidTags = (input) => {
+  if (!input.length) {
+    return true;
+  }
+  return getNormalizedStringArray(input).every((tag) => regexpHashtag.test(tag));
+};
 
 const validateHashtagDuplicate = (input) => {
-  const hashtags = getNormalizedStringArray(input);
+  const hashtags = getNormalizedStringArray(input).map((tag) => tag.toLowerCase());
   const uniqueHashtags = new Set(hashtags);
   return hashtags.length === uniqueHashtags.size;
 };
 
 const validateDescriptionLength = (input) => MAX_COMMENTS_SYMBOLS >= input.length;
 
-if (hashtagsInput.value.trim()) {
-  pristine.addValidator(hashtagsInput, hasValidTags, ErrorMessage.HASHTAG_VALID_ERROR, 2, true);
-  pristine.addValidator(hashtagsInput, validateHashtagCount, ErrorMessage.HASHTAG_COUNT, 1, true);
-  pristine.addValidator(hashtagsInput, validateHashtagDuplicate, ErrorMessage.DUPLICATE_HASHTAGS, 3, true);
-}
-if (descriptionImage.value.trim()) {
-  pristine.addValidator(descriptionImage, validateDescriptionLength, ErrorMessage.COMMENTS_SYMBOLS, 4, true);
-}
+const blockSubmitButton = () => {
+  submitButton.disabled = true;
+  submitButton.textContent = SubmitButtonText.SENDING;
+};
 
-const formSubmit = (onSuccess) => {
+const unblockSubmitButton = () => {
+  submitButton.disabled = false;
+  submitButton.textContent = SubmitButtonText.IDLE;
+};
+
+pristine.addValidator(hashtagsInput, hasValidTags, ErrorMessage.HASHTAG_VALID_ERROR, 1, true);
+pristine.addValidator(hashtagsInput, validateHashtagCount, ErrorMessage.HASHTAG_COUNT, 3, true);
+pristine.addValidator(hashtagsInput, validateHashtagDuplicate, ErrorMessage.DUPLICATE_HASHTAGS, 2, true);
+pristine.addValidator(descriptionImage, validateDescriptionLength, ErrorMessage.COMMENTS_SYMBOLS, 4, true);
+
+const formSubmit = () => {
   form.addEventListener('submit', (evt) => {
     evt.preventDefault();
     if (pristine.validate()) {
+      blockSubmitButton();
       sendData(new FormData(evt.target))
         .then(() => {
-          onSuccess();
+          closeModal();
           showSuccess();
         })
         .catch(
           () => {
             showAlertLoadingImages();
           }
-        );
+        ).finally(unblockSubmitButton);
     }
   });
 };
@@ -104,6 +124,8 @@ function openModal() {
 
 function closeModal() {
   form.reset();
+  resetScale();
+  resetSlider();
   pristine.reset();
   editingImage.classList.add('hidden');
   document.body.classList.remove('modal-open');
@@ -115,4 +137,4 @@ cancelButton.addEventListener('click', (evt) => {
   closeModal();
 });
 
-export { uploadInputHandler, formSubmit, closeModal, openModal, form, preview, uploadInput };
+export { uploadInputHandler, formSubmit, openModal, form, preview, uploadInput };
