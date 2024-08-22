@@ -1,16 +1,16 @@
-import { preview, form } from './form-validation.js';
-import { PREVIEW_PER_STEP } from './constants.js';
+import { SCALE_PER_STEP, MIN_SCALE, MAX_SCALE, DEFAULT_SCALE } from './constants.js';
 
 const scaleContainer = document.querySelector('.img-upload__scale');
 const buttonSmaller = scaleContainer.querySelector('.scale__control--smaller');
 const buttonBigger = scaleContainer.querySelector('.scale__control--bigger');
 const valueScale = scaleContainer.querySelector('.scale__control--value');
-const sliderContainer = form.querySelector('.effect-level');
-const sliderElement = form.querySelector('.effect-level__slider');
-const effectLevelValueElement = form.querySelector('.effect-level__value');
-const effectsElement = form.querySelector('.effects');
+const sliderContainer = document.querySelector('.effect-level');
+const sliderElement = sliderContainer.querySelector('.effect-level__slider');
+const effectLevelValueElement = sliderContainer.querySelector('.effect-level__value');
+const preview = document.querySelector('.img-upload__preview img');
+const effectsElement = document.querySelector('.effects');
 
-const Effects = [
+const effectToOptions = [
   {
     name: 'none',
     style: 'none',
@@ -24,7 +24,7 @@ const Effects = [
     style: 'grayscale',
     min: 0,
     max: 1,
-    step: 0.10,
+    step: 0.1,
     unit: ''
   },
   {
@@ -32,7 +32,7 @@ const Effects = [
     style: 'sepia',
     min: 0,
     max: 1,
-    step: 0.10,
+    step: 0.1,
     unit: ''
   },
   {
@@ -48,7 +48,7 @@ const Effects = [
     style: 'blur',
     min: 0,
     max: 3,
-    step: 0.10,
+    step: 0.1,
     unit: 'px'
   },
   {
@@ -56,15 +56,15 @@ const Effects = [
     style: 'brightness',
     min: 1,
     max: 3,
-    step: 0.10,
+    step: 0.1,
     unit: ''
   },
 ];
 
-const DEFAULT_EFFECT = Effects[0];
+const DEFAULT_EFFECT = effectToOptions[0];
 let chosenEffect = DEFAULT_EFFECT;
 
-const addHiddenSlider = () => {
+const hideSlider = () => {
   sliderContainer.classList.add('hidden');
 };
 
@@ -83,7 +83,7 @@ const updateSlider = () => {
   });
 
   if (chosenEffect === DEFAULT_EFFECT) {
-    addHiddenSlider();
+    hideSlider();
   } else {
     showSlider();
   }
@@ -94,40 +94,13 @@ const resetSlider = () => {
   updateSlider();
 };
 
-const setScaleButtonsImageSmaller = () => {
-  const currentWidth = parseFloat(preview.style.getPropertyValue('width'));
-  const newWidth = currentWidth - PREVIEW_PER_STEP;
-
-  if (currentWidth <= 25) {
-    buttonSmaller.disabled = true;
-  } else {
-    preview.style.setProperty('width', `${newWidth}%`);
-    valueScale.value = `${newWidth}%`;
-  }
-  buttonSmaller.disabled = false;
-};
-
-const setScaleButtonsImageBigger = () => {
-  const currentWidth = parseFloat(preview.style.getPropertyValue('width'));
-  const newWidth = currentWidth + PREVIEW_PER_STEP;
-
-  if (currentWidth >= 100) {
-    buttonBigger.disabled = true;
-  } else {
-    preview.style.setProperty('width', `${newWidth}%`);
-    valueScale.value = `${newWidth}%`;
-  }
-  buttonBigger.disabled = false;
-};
-
 const onEffectsChange = (evt) => {
   if (!evt.target.classList.contains('effects__radio')) {
     return;
   }
-  chosenEffect = Effects.find((effect) => effect.name === evt.target.value);
+  chosenEffect = effectToOptions.find((effect) => effect.name === evt.target.value);
   preview.className = `img-upload__preview effects__preview--${chosenEffect.name}`;
   updateSlider();
-
 };
 
 const onSliderUpdate = () => {
@@ -143,18 +116,39 @@ noUiSlider.create(sliderElement, {
   },
   start: DEFAULT_EFFECT.max,
   step: DEFAULT_EFFECT.step,
-  connect: 'lower'
+  connect: 'lower',
+  format: {
+    to: (value) => Number(value),
+    from: (value) => Number(value),
+  }
 });
 
-addHiddenSlider();
+const scaleImage = (value) => {
+  preview.style.transform = `scale(${value / 100})`;
+  valueScale.value = `${value}%`;
+};
+
+const onScaleButtonsImageSmaller = () => {
+  scaleImage(
+    Math.max(parseInt(valueScale.value, 10) - SCALE_PER_STEP, MIN_SCALE)
+  );
+};
+
+const onScaleButtonsImageBigger = () => {
+  scaleImage(
+    Math.min(parseInt(valueScale.value, 10) + SCALE_PER_STEP, MAX_SCALE)
+  );
+};
+
+const resetScale = () => {
+  scaleImage(DEFAULT_SCALE);
+};
+
+hideSlider();
 
 effectsElement.addEventListener('change', onEffectsChange);
 sliderElement.noUiSlider.on('update', onSliderUpdate);
-buttonSmaller.addEventListener('click', () => {
-  setScaleButtonsImageSmaller();
-});
-buttonBigger.addEventListener('click', () => {
-  setScaleButtonsImageBigger();
-});
+buttonSmaller.addEventListener('click', onScaleButtonsImageSmaller);
+buttonBigger.addEventListener('click', onScaleButtonsImageBigger);
 
-export { resetSlider };
+export { resetSlider, resetScale };

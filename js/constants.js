@@ -1,11 +1,12 @@
 import { isEscapeKey } from './util.js';
 
-const INFO_BLOCK_COUNT = 25;
-const MIN_COMMENTS = 0;
-const MAX_COMMENTS = 30;
 const SHOW_TIME = 5000;
 const MAX_RANDOM_PICTURE_COUNT = 10;
-const PREVIEW_PER_STEP = 25;
+const SCALE_PER_STEP = 25;
+const MIN_SCALE = 25;
+const MAX_SCALE = 100;
+const DEFAULT_SCALE = 100;
+const RENDER_DELAY = 500;
 const API_URL = 'https://32.javascript.htmlacademy.pro/kekstagram';
 
 const Method = {
@@ -56,4 +57,4 @@ const showSuccess = () => {
   renderResponseMessage(successContainer);
 };
 
-export { INFO_BLOCK_COUNT, MIN_COMMENTS, MAX_COMMENTS, Method, Route, API_URL, showSuccess, showAlert, showAlertLoadingImages, MAX_RANDOM_PICTURE_COUNT, PREVIEW_PER_STEP };
+export { Method, Route, API_URL, showSuccess, showAlert, showAlertLoadingImages, MAX_RANDOM_PICTURE_COUNT, SCALE_PER_STEP, MIN_SCALE, MAX_SCALE, DEFAULT_SCALE, RENDER_DELAY };
